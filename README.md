@@ -1,18 +1,61 @@
-# Patternfly Seed
+# PatternFly React Seed - Compass Theme Branch
 
-Patternfly Seed is an open source build scaffolding utility for web apps. The primary purpose of this project is to give developers a jump start when creating new projects that will use patternfly. A secondary purpose of this project is to serve as a reference for how to configure various aspects of an application that uses patternfly, webpack, react, typescript, etc.
+This is the **Compass theme branch** of PatternFly React Seed - a specialized build scaffolding utility designed for creating modern, AI-optimized web applications with PatternFly's new **Compass theme** and **Generative UI** components.
 
-Out of the box you'll get an app layout with chrome (header/sidebar), routing, build pipeline, test suite, and some code quality tools. Basically, all the essentials.
+## 🎯 What is This Branch?
 
-<img width="1058" alt="Out of box dashboard view of patternfly seed" src="https://github.com/user-attachments/assets/0227b366-67f1-4df8-8d92-e8e95d6e08b3" />
+The `compass_theme` branch is a **seed/template for building Compass-based UIs** that leverage PatternFly's latest generative UI capabilities, including:
+
+- 🎨 **Glass-morphism effects** and modern visual treatments
+- 🤖 **AI-optimized components** with thinking indicators and AI content highlighting
+- 📐 **Compass layout components** designed for agentic development
+- 🔄 **React Flow integration** for pipelines and topology visualizations
+- ✨ **New design tokens** for gradients, animations, and background effects
+
+Out of the box you'll get a Compass-themed app layout with chrome (header/sidebar), routing, build pipeline, test suite, and code quality tools - all optimized for AI-assisted development with tools like Cursor and Claude Code.
+
+<img width="1400" alt="Compass theme dashboard with glass effects and modern dark UI" src="./seed_screenshot.png" />
+
+> **Note**: This branch uses **unpublished Compass components** from PatternFly's staging site. See the [Compass Theme Guide](./ai-documentation/guidelines/compass-theme-guide.md) for complete documentation.
 
 ## Quick-start
 
 ```bash
+# Clone the repository and checkout the compass_theme branch
 git clone https://github.com/patternfly/patternfly-react-seed
 cd patternfly-react-seed
+git checkout compass_theme
+
+# Install dependencies and start the dev server
 npm install && npm run start:dev
 ```
+
+The app will start on `http://localhost:9000` with the Compass theme and all generative UI features enabled.
+
+## Compass Theme Features
+
+This branch includes PatternFly's Compass enablement features:
+
+### New Component Variants
+- **`isPlain`** - Transparent cards, data lists, and tables for glass-morphism effects
+- **`isVertical`** - Vertical action lists for sidebars
+- **`isNav`** - Optimized tab styling for top navigation
+- **`isCircle`** - Circular buttons and menu toggles
+- **`isPill`** - Rounded, floating drawer panels
+- **`isThinking`** - Pulsing animation for AI processing states
+- **`hasAiIndicator`** - Gradient borders for AI-related content
+
+### Design Tokens
+- Glass-like visual effects
+- Background and border gradients
+- Smooth animations
+- Background image support
+
+### React Flow Integration
+Build pipelines, topology views, and workflow diagrams with React Flow + PatternFly. See [staging.patternfly.org/ai/generative-uis/react-flow](https://staging.patternfly.org/ai/generative-uis/react-flow).
+
+📖 **Full documentation**: [Compass Theme Guide](./ai-documentation/guidelines/compass-theme-guide.md)
+
 ## Development scripts
 ```sh
 # Install development/build dependencies
@@ -105,19 +148,28 @@ If you are using an AI-enabled IDE, the AI agent will automatically leverage the
 
 By following these rules—either directly or via your AI assistant—you'll ensure your app is maintainable, accessible, and consistent with PatternFly best practices.
 
-### 🚨 Compass Theme Branch
+### 🚨 Working with Compass Components
 
-This branch (`compass_theme`) uses **Compass theme components** from PatternFly's **Generative UI** initiative. These components are optimized for AI-assisted development but are **not yet published** on the main PatternFly website.
+This `compass_theme` branch uses **unpublished Compass theme components** from PatternFly's **Generative UI** initiative. These cutting-edge components are optimized for AI-assisted development and generative interfaces.
 
-**Important for AI agents and developers:**
-- 📖 Compass component docs are on **[staging.patternfly.org/ai/generative-uis](https://staging.patternfly.org/ai/generative-uis/overview)**
-- 🔍 Standard PatternFly components remain on **[patternfly.org](https://www.patternfly.org/)**
-- 📝 See [Compass Theme Guide](./ai-documentation/guidelines/compass-theme-guide.md) for complete instructions
+**📚 Documentation Sources:**
 
-**AI agents should:**
-1. Check staging.patternfly.org for Compass/Generative UI components first
-2. Fall back to patternfly.org for standard components
-3. Note that PatternFly MCP won't have Compass docs yet
+| Component Type | Documentation Location |
+|----------------|------------------------|
+| 🎨 **Compass/Generative UI** | [staging.patternfly.org/ai/generative-uis](https://staging.patternfly.org/ai/generative-uis/overview) |
+| 🔄 **React Flow** | [staging.patternfly.org/ai/generative-uis/react-flow](https://staging.patternfly.org/ai/generative-uis/react-flow) |
+| 📘 **Standard PatternFly** | [patternfly.org](https://www.patternfly.org/) |
+| 📖 **Complete Guide** | [Compass Theme Guide](./ai-documentation/guidelines/compass-theme-guide.md) |
+
+**⚠️ Important Notes:**
+- Compass components are **not yet on the main PatternFly site** - use staging site
+- PatternFly MCP server won't have Compass component docs yet
+- Always check the staging site first for Compass-specific features
+
+**🤖 For AI Agents:**
+- Use [staging.patternfly.org/ai/generative-uis](https://staging.patternfly.org/ai/generative-uis/overview) for Compass components
+- Use [patternfly.org](https://www.patternfly.org/) for standard components
+- See [Quick Reference](./ai-documentation/COMPASS-QUICK-REF.md) for decision trees
 
 ## Multi environment configuration
 This project uses [dotenv-webpack](https://www.npmjs.com/package/dotenv-webpack) for exposing environment variables to your code. Either export them at the system level like `export MY_ENV_VAR=http://dev.myendpoint.com && npm run start:dev` or simply drop a `.env` file in the root that contains your key-value pairs like below:
