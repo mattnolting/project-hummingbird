@@ -5,6 +5,7 @@ import {
   CardBody,
   CardTitle,
   CompassContent,
+  CompassMainHeader,
   CompassPanel,
   DescriptionList,
   DescriptionListDescription,
@@ -28,6 +29,7 @@ import {
 
 const Dashboard: React.FunctionComponent = () => (
   <>
+    <CompassMainHeader title={<Title headingLevel="h1">Dashboard</Title>} />
     <CompassContent>
       <Grid hasGutter>
         {/* Status Cards */}
