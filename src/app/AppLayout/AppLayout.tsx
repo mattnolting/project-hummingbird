@@ -6,7 +6,6 @@ import {
   Brand,
   Button,
   ButtonVariant,
-  Compass,
   Divider,
   Dropdown,
   DropdownItem,
@@ -85,11 +84,9 @@ const AppLayout: React.FunctionComponent<AppLayoutProps> = ({ children }) => {
   };
 
   const userDropdownItems = [
-    <>
-      <DropdownItem key="profile">My profile</DropdownItem>
-      <DropdownItem key="user">User management</DropdownItem>
-      <DropdownItem key="logout">Logout</DropdownItem>
-    </>,
+    <DropdownItem key="profile">My profile</DropdownItem>,
+    <DropdownItem key="user">User management</DropdownItem>,
+    <DropdownItem key="logout">Logout</DropdownItem>,
   ];
 
   // Create refs for nav items dynamically
@@ -114,10 +111,11 @@ const AppLayout: React.FunctionComponent<AppLayoutProps> = ({ children }) => {
   const MastheadComponent = Masthead as any;
   const ToolbarComponent = Toolbar as any;
   const NavComponent = Nav as any;
-  const CompassComponent = Compass as any;
+  const NavItemComponent = NavItem as any;
+  // const CompassComponent = Compass as any; // Using CSS-based approach instead
 
   const dockContent = (
-    <MastheadComponent id="icon-router-link" variant="docked">
+    <MastheadComponent id="icon-router-link" className="pf-m-docked">
       <MastheadMain>
         <MastheadBrand>
           <MastheadLogo component={(props) => <a {...props} href="/" />}>
@@ -127,35 +125,45 @@ const AppLayout: React.FunctionComponent<AppLayoutProps> = ({ children }) => {
       </MastheadMain>
       <Divider />
       <MastheadContent>
-        <ToolbarComponent id="toolbar" isVertical>
+        <ToolbarComponent id="toolbar" className="pf-m-vertical">
           <ToolbarContent>
             <ToolbarItem>
               <NavComponent onSelect={onNavSelect} variant="docked" aria-label="Main navigation" ouiaId="IconNav">
                 <NavList>
                   {navRoutes.map((route) => {
                     if (!route) return null;
-                    const navRef = navItemRefs.current[route.path];
                     const routeLabel = route.label || route.path;
                     return (
-                      <React.Fragment key={route.path}>
-                        <NavItem
-                          key={route.path}
-                          preventDefault
-                          id={`nav-${route.path}`}
-                          to={route.path}
-                          itemId={route.path}
-                          isActive={activeItem === route.path}
-                          icon={getRouteIcon(route.path)}
-                          aria-label={routeLabel}
-                        />
-                        {navRef && navRef.current && (
-                          <Tooltip aria="none" aria-live="off" triggerRef={navRef} content={routeLabel} />
-                        )}
-                      </React.Fragment>
+                      <NavItemComponent
+                        key={route.path}
+                        preventDefault
+                        id={`nav-${route.path}`}
+                        to={route.path}
+                        itemId={route.path}
+                        isActive={activeItem === route.path}
+                        icon={getRouteIcon(route.path)}
+                        aria-label={routeLabel}
+                      />
                     );
                   })}
                 </NavList>
               </NavComponent>
+              {navRoutes.map((route) => {
+                if (!route) return null;
+                const navRef = navItemRefs.current[route.path];
+                const routeLabel = route.label || route.path;
+                return (
+                  navRef && (
+                    <Tooltip
+                      key={`tooltip-${route.path}`}
+                      aria="none"
+                      aria-live="off"
+                      triggerRef={navRef}
+                      content={routeLabel}
+                    />
+                  )
+                );
+              })}
             </ToolbarItem>
             <ToolbarGroup
               variant="action-group-plain"
@@ -211,14 +219,32 @@ const AppLayout: React.FunctionComponent<AppLayoutProps> = ({ children }) => {
     </MastheadComponent>
   );
 
+  // Debug: Check if children and dockContent are valid
+  console.log('AppLayout render:', {
+    hasChildren: !!children,
+    hasDockContent: !!dockContent,
+    navRoutesCount: navRoutes.length,
+    childrenType: typeof children,
+  });
+
+  // Try CSS-based approach first to see if Compass component is the issue
+  // This matches the hummingbird-compass-theme pattern
   return (
-    <CompassComponent
-      dock={dockContent}
-      main={children}
-      backgroundSrcDark="/app/bgimages/pf-background.svg"
-      backgroundSrcLight="/app/bgimages/pf-background.svg"
-    />
+    <div className="pf-v6-c-compass pf-m-dock pf-m-animate-smoothly">
+      <div className="pf-v6-c-compass__dock">{dockContent}</div>
+      <div className="pf-v6-c-compass__main">{children}</div>
+    </div>
   );
+
+  // Original Compass component approach (commented out for debugging)
+  // return (
+  //   <CompassComponent
+  //     dock={dockContent}
+  //     main={children}
+  //     backgroundSrcDark="/app/bgimages/pf-background.svg"
+  //     backgroundSrcLight="/app/bgimages/pf-background.svg"
+  //   />
+  // );
 };
 
 export { AppLayout };
