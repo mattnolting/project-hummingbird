@@ -1,4 +1,5 @@
 # Data Layer Abstraction Roadmap
+
 ## Clean, Concise Data Source Architecture
 
 ## Overview
@@ -10,16 +11,19 @@ This roadmap outlines the design and implementation of a clean, abstracted data 
 ### Existing Implementation
 
 **API Clients:**
+
 - `quayClient.ts` - Quay.io API (most complete, handles mock data)
 - `cveClient.ts` - CVE scanning API (stub implementation)
 - `sbomClient.ts` - SBOM fetching (stub implementation)
 - `pyxisClient.ts` - Pyxis integration (not yet implemented)
 
 **React Hooks:**
+
 - `useContainers.ts` - Fetches container list (directly uses quayClient)
 - `useContainer.ts` - Fetches single container (directly uses quayClient)
 
 **Types:**
+
 - Domain types: `ContainerImage`, `CVE`, `SecurityInfo` (in `lib/types/`)
 - API-specific types: `QuayRepository`, `QuayTag` (in clients)
 
@@ -58,7 +62,7 @@ graph TB
         C[SecurityInfo]
         D[CVEList]
     end
-    
+
     subgraph Hooks["React Hooks Layer"]
         E[useContainerList]
         F[useContainerDetail]
@@ -66,66 +70,66 @@ graph TB
         H[useSBOM]
         I[useSecurityInfo]
     end
-    
+
     subgraph DataSources["Data Source Abstraction"]
         J[ContainerDataSource]
         K[SecurityDataSource]
         L[SBOMDataSource]
     end
-    
+
     subgraph Adapters["API Adapters"]
         M[QuayAdapter]
         N[CVEAdapter]
         O[SBOMAdapter]
         P[PyxisAdapter]
     end
-    
+
     subgraph Clients["API Clients"]
         Q[quayClient]
         R[cveClient]
         S[sbomClient]
         T[pyxisClient]
     end
-    
+
     subgraph Cache["Cache Layer"]
         U[MemoryCache]
         V[QueryCache]
     end
-    
+
     subgraph Domain["Domain Models"]
         W[Container]
         X[SecurityInfo]
         Y[SBOM]
     end
-    
+
     A --> E
     B --> F
     C --> G
     C --> H
     D --> I
-    
+
     E --> J
     F --> J
     G --> K
     H --> L
     I --> K
-    
+
     J --> M
     K --> N
     K --> P
     L --> O
-    
+
     M --> Q
     N --> R
     O --> S
     P --> T
-    
+
     J --> U
     K --> U
     L --> U
-    
+
     U --> V
-    
+
     M --> W
     N --> X
     O --> Y
@@ -144,6 +148,49 @@ graph TB
 ---
 
 ## Directory Structure
+
+### Project Hummingbird - Overall Structure
+
+```
+project-hummingbird/
+├── src/
+│   ├── app/                   # Application layout and routing
+│   │   ├── App Layout.tsx
+│   │   ├── 404.tsx
+│   │   └── NotFound.tsx
+│   │
+│   ├── pages/                 # Page components
+│   │   ├── Dashboard.tsx
+│   │   ├── Catalog.tsx
+│   │   └── Container.tsx
+│   │
+│   ├── assets/                # Static assets
+│   │   ├── images/
+│   │   └── svgs/
+│   │
+│   ├── components/            # Reusable UI components
+│   │   ├── App Layout/
+│   │   │   ├── App Header.tsx
+│   │   │   ├── App Body.tsx
+│   │   │   └── App Footer.tsx
+│   │   └── ...
+│   │
+│   ├── lib/                   # Library code
+│   │   ├── api/               # API layer (structure TBD)
+│   │   │   └── (shape contract.json or yaml?)
+│   │   └── data/              # Data abstraction layer (see below)
+│   │
+│   └── data/                  # Data files
+│       └── containers.json    # Hummingbird container definitions
+│
+├── config.json                # Application configuration
+│   ├── settings
+│   └── version
+│
+└── docs/                      # Documentation
+```
+
+### Data Layer Structure (src/lib/data/)
 
 ```
 src/lib/data/
@@ -199,6 +246,57 @@ src/lib/data/
 └── index.ts                   # Public API
 ```
 
+### Data Flow Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    API Sources                              │
+│  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐                     │
+│  │ QUAY │  │ CVE  │  │ SBOM │  │Pyxis │                     │
+│  └──┬───┘  └──┬───┘  └──┬───┘  └──┬───┘                     │
+│     │         │         │         │                         │
+│     └─────────┴─────────┴─────────┘                         │
+│                    │                                        │
+│                    ▼                                        │
+│              ┌──────────┐                                   │
+│              │ ADAPTOR  │                                   │
+│              └────┬─────┘                                   │
+│                   │                                         │
+│                   ▼                                         │
+│      ┌──────────────────────────┐                           │
+│      │ SHAPE/SCHEMA CONTRACT    │                          │
+│      │ (contract.json or yaml)  │                          │
+│      └────┬─────────────────────┘                           │
+│           │                                                 │
+│           ▼                                                 │
+│  ┌────────────────────────────┐                             │
+│  │ API / HUMMINGBIRD-CONTAINER│                             │
+│  └────────────────────────────┘                             │
+└─────────────────────────────────────────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────┐
+│   CONTAINERS.JSON            │
+│   {                          │
+│     CONTAINER_NAME {         │
+│       HASH                   │
+│       ... OTHER INFO         │
+│       FROM ROADMAP           │
+│     }                        │
+│     CONTAINER_NAME2 {        │
+│       SAME SHAPE AS          │
+│       CONTAINER1             │
+│     }                        │
+│   }                          │
+└──────────────────────────────┘
+```
+
+### Key Files
+
+- **`src/data/containers.json`**: Hummingbird container definitions conforming to the schema contract
+- **`config.json`**: Application settings and version information
+- **`src/lib/api/`**: API layer structure (to be defined with shape contract in JSON or YAML format)
+
 ---
 
 ## Implementation Phases
@@ -208,9 +306,11 @@ src/lib/data/
 **Priority:** P0 (Critical)
 
 #### 1.1 Domain Model Definitions
+
 **Files:** `src/lib/data/domain/*.ts`
 
 **Tasks:**
+
 - Define normalized `Container` type (combines QuayRepository + additional fields)
 - Define `Tag` type (normalized from QuayTag)
 - Define `SecurityInfo` type (combines CVE + Pyxis data)
@@ -219,15 +319,16 @@ src/lib/data/
 - Ensure types are API-agnostic
 
 **Key Types:**
+
 ```typescript
 // Container.ts
 export interface Container {
-  id: string;                    // Unique identifier
-  name: string;                  // Image name
-  namespace: string;             // Organization/namespace
+  id: string; // Unique identifier
+  name: string; // Image name
+  namespace: string; // Organization/namespace
   description?: string;
-  logo?: string;                 // Distributor logo URL
-  upstreamLink?: string;         // GitHub/repository link
+  logo?: string; // Distributor logo URL
+  upstreamLink?: string; // GitHub/repository link
   license?: License;
   compatibility: CompatibilityData;
   tags: Tag[];
@@ -253,9 +354,11 @@ export interface SecurityInfo {
 ```
 
 #### 1.2 Base Interfaces
+
 **Files:** `src/lib/data/sources/DataSource.ts`, `src/lib/data/adapters/Adapter.ts`
 
 **Tasks:**
+
 - Define `DataSource<T>` interface
 - Define `Adapter<TInput, TOutput>` interface
 - Define error types
@@ -266,9 +369,11 @@ export interface SecurityInfo {
 **Priority:** P0 (Critical)
 
 #### 2.1 Quay Adapter
+
 **File:** `src/lib/data/adapters/quayAdapter.ts`
 
 **Tasks:**
+
 - Transform `QuayRepository` → `Container`
 - Transform `QuayTag` → `Tag`
 - Handle missing/null fields
@@ -276,6 +381,7 @@ export interface SecurityInfo {
 - Map API-specific fields to domain fields
 
 **Example:**
+
 ```typescript
 export const quayAdapter = {
   toContainer: (quayRepo: QuayRepository): Container => ({
@@ -287,7 +393,7 @@ export const quayAdapter = {
     lastUpdated: new Date(quayRepo.last_modified || Date.now()),
     // ... map other fields
   }),
-  
+
   toTag: (quayTag: QuayTag): Tag => ({
     name: quayTag.name,
     digest: quayTag.manifest_digest,
@@ -300,26 +406,32 @@ export const quayAdapter = {
 ```
 
 #### 2.2 CVE Adapter
+
 **File:** `src/lib/data/adapters/cveAdapter.ts`
 
 **Tasks:**
+
 - Transform CVE API response → `SecurityInfo`
 - Order CVEs by severity
 - Calculate CVE breakdown
 - Handle zero CVE case
 
 #### 2.3 SBOM Adapter
+
 **File:** `src/lib/data/adapters/sbomAdapter.ts`
 
 **Tasks:**
+
 - Transform SBOM API response → `SBOM` domain model
 - Handle different SBOM formats (SPDX, CycloneDX)
 - Extract package information
 
 #### 2.4 Pyxis Adapter
+
 **File:** `src/lib/data/adapters/pyxisAdapter.ts`
 
 **Tasks:**
+
 - Transform Pyxis API response → `SecurityInfo`
 - Merge with CVE data
 - Extract compliance information (FIPS, STIG)
@@ -329,9 +441,11 @@ export const quayAdapter = {
 **Priority:** P0 (Critical)
 
 #### 3.1 Container Data Source
+
 **File:** `src/lib/data/sources/ContainerDataSource.ts`
 
 **Tasks:**
+
 - Implement `ContainerDataSource` interface
 - Orchestrate multiple API calls (Quay + metadata)
 - Handle caching
@@ -339,34 +453,41 @@ export const quayAdapter = {
 - Support search, filter, pagination
 
 **Methods:**
+
 - `listContainers(options)` - List with filters/search
 - `getContainer(id)` - Get single container
 - `getTags(containerId)` - Get tags for container
 - `searchContainers(query)` - Search functionality
 
 #### 3.2 Security Data Source
+
 **File:** `src/lib/data/sources/SecurityDataSource.ts`
 
 **Tasks:**
+
 - Implement `SecurityDataSource` interface
 - Orchestrate CVE + Pyxis API calls
 - Merge security data from multiple sources
 - Cache security scans
 
 **Methods:**
+
 - `getSecurityInfo(containerId, tag?)` - Get complete security info
 - `getCVEs(containerId, tag?)` - Get CVE list
 - `getComplianceInfo(containerId)` - Get FIPS/STIG info
 
 #### 3.3 SBOM Data Source
+
 **File:** `src/lib/data/sources/SBOMDataSource.ts`
 
 **Tasks:**
+
 - Implement `SBOMDataSource` interface
 - Handle SBOM fetching and caching
 - Support multiple formats
 
 **Methods:**
+
 - `getSBOM(containerId, tag?, format?)` - Get SBOM
 - `getPackages(containerId, tag?)` - Get package list
 
@@ -375,22 +496,27 @@ export const quayAdapter = {
 **Priority:** P1 (High)
 
 #### 4.1 Memory Cache Implementation
+
 **File:** `src/lib/data/cache/MemoryCache.ts`
 
 **Tasks:**
+
 - Implement in-memory cache with TTL
 - Cache key generation
 - Cache invalidation strategies
 - Size limits and eviction policies
 
 **Features:**
+
 - Time-based expiration (TTL)
 - Size-based eviction (LRU)
 - Manual invalidation
 - Cache statistics
 
 #### 4.2 Cache Integration
+
 **Tasks:**
+
 - Integrate cache into data sources
 - Define cache keys for each data type
 - Implement cache warming strategies
@@ -400,9 +526,11 @@ export const quayAdapter = {
 **Priority:** P0 (Critical)
 
 #### 5.1 Container Hooks
+
 **Files:** `src/lib/data/hooks/useContainerList.ts`, `useContainerDetail.ts`
 
 **Tasks:**
+
 - Refactor existing hooks to use data sources
 - Add loading states
 - Add error states
@@ -410,17 +538,21 @@ export const quayAdapter = {
 - Support pagination
 
 #### 5.2 Security Hooks
+
 **Files:** `src/lib/data/hooks/useCVEList.ts`, `useSecurityInfo.ts`
 
 **Tasks:**
+
 - Create hooks for security data
 - Support real-time updates
 - Handle partial data loading
 
 #### 5.3 SBOM Hooks
+
 **File:** `src/lib/data/hooks/useSBOM.ts`
 
 **Tasks:**
+
 - Create hook for SBOM data
 - Support format selection
 - Handle large SBOM files
@@ -430,18 +562,22 @@ export const quayAdapter = {
 **Priority:** P1 (High)
 
 #### 6.1 Error Handling
+
 **Files:** `src/lib/data/errors/*.ts`
 
 **Tasks:**
+
 - Define custom error types
 - Create error handler
 - Transform API errors to user-friendly messages
 - Logging and error reporting
 
 #### 6.2 Centralized Mock Data
+
 **File:** `src/lib/data/clients/mockData.ts`
 
 **Tasks:**
+
 - Consolidate all mock data
 - Create mock data generators
 - Support development mode
@@ -452,14 +588,18 @@ export const quayAdapter = {
 **Priority:** P1 (High)
 
 #### 7.1 Migration Strategy
+
 **Tasks:**
+
 - Migrate existing components to new hooks
 - Update type imports
 - Remove direct API client usage from components
 - Gradual migration path
 
 #### 7.2 Testing
+
 **Tasks:**
+
 - Unit tests for adapters
 - Unit tests for data sources
 - Integration tests for hooks
@@ -477,29 +617,29 @@ export const quayAdapter = {
 // domain/Container.ts
 export interface Container {
   // Identity
-  id: string;                    // "namespace/name"
+  id: string; // "namespace/name"
   name: string;
   namespace: string;
-  
+
   // Display
   description?: string;
-  logo?: string;                // Distributor logo URL
-  upstreamLink?: string;        // GitHub/repository
-  
+  logo?: string; // Distributor logo URL
+  upstreamLink?: string; // GitHub/repository
+
   // Metadata
   license?: License;
   compatibility: CompatibilityData;
-  
+
   // Lifecycle
   tags: Tag[];
   lastUpdated: Date;
   lastScanned?: Date;
-  
+
   // Status
   isPublic: boolean;
   pullCount?: number;
   starCount?: number;
-  
+
   // Hummingbird-specific
   isHummingbird?: boolean;
   variants?: Variant[];
@@ -541,28 +681,28 @@ export interface CompatibilityData {
 export interface SecurityInfo {
   containerId: string;
   tag?: string;
-  
+
   // CVE Information
   cveCount: number;
   zeroCVE: boolean;
   cves: CVE[];
   cveBreakdown: CVEBreakdown;
-  
+
   // Compliance
   fipsEnabled?: boolean;
   stigCompliant?: boolean;
-  
+
   // SBOM
   sbomAvailable: boolean;
   totalPackages?: number;
-  
+
   // Metadata
   lastScanned?: Date;
   scanStatus?: 'pending' | 'completed' | 'failed';
 }
 
 export interface CVE {
-  id: string;                    // "CVE-2024-1234"
+  id: string; // "CVE-2024-1234"
   severity: 'critical' | 'high' | 'medium' | 'low';
   cvssScore?: number;
   description: string;
@@ -666,16 +806,19 @@ gantt
 ## Migration Strategy
 
 ### Step 1: Parallel Implementation
+
 - Build new data layer alongside existing code
 - Keep existing hooks working
 - No breaking changes initially
 
 ### Step 2: Gradual Migration
+
 - Migrate one component at a time
 - Update imports to use new hooks
 - Remove direct API client usage
 
 ### Step 3: Cleanup
+
 - Remove old hook implementations
 - Consolidate types
 - Update documentation
@@ -697,6 +840,7 @@ gantt
 ## Success Criteria
 
 ### Functional Requirements
+
 - [ ] All API interactions go through data sources
 - [ ] Components use domain models, not API types
 - [ ] Caching reduces API calls by 50%+
@@ -705,6 +849,7 @@ gantt
 - [ ] New APIs can be added without changing components
 
 ### Technical Requirements
+
 - [ ] Full TypeScript type safety
 - [ ] Zero direct API client usage in components
 - [ ] All data sources are testable with mocks
@@ -712,6 +857,7 @@ gantt
 - [ ] Performance meets benchmarks
 
 ### Developer Experience
+
 - [ ] Easy to add new data sources
 - [ ] Clear separation of concerns
 - [ ] Well-documented APIs
@@ -722,18 +868,21 @@ gantt
 ## Benefits
 
 ### For Developers
+
 - **Clean API**: Single interface for all data operations
 - **Type Safety**: Domain models prevent API coupling
 - **Testability**: Easy to mock data sources
 - **Maintainability**: Changes to APIs don't affect components
 
 ### For Application
+
 - **Performance**: Caching reduces API calls
 - **Reliability**: Consistent error handling
 - **Flexibility**: Easy to swap APIs or add new sources
 - **User Experience**: Faster load times, better error messages
 
 ### For Future
+
 - **Extensibility**: Easy to add new APIs (Docker Hub, etc.)
 - **Scalability**: Cache layer can be upgraded to Redis
 - **Testing**: Mock data sources for E2E tests
@@ -744,22 +893,27 @@ gantt
 ## Key Decisions
 
 ### 1. Adapter Pattern
+
 **Decision**: Use adapter pattern to transform API responses
 **Rationale**: Keeps domain models clean, allows multiple API sources
 
 ### 2. Data Source Abstraction
+
 **Decision**: Abstract data operations behind interfaces
 **Rationale**: Enables testing, caching, and future API additions
 
 ### 3. Caching Strategy
+
 **Decision**: In-memory cache with TTL
 **Rationale**: Simple, effective, can upgrade to Redis later
 
 ### 4. Hook-Based API
+
 **Decision**: React hooks as primary interface for components
 **Rationale**: Familiar pattern, good for React apps
 
 ### 5. Gradual Migration
+
 **Decision**: Build alongside existing code, migrate gradually
 **Rationale**: Reduces risk, allows testing, no big-bang changes
 
@@ -778,7 +932,6 @@ gantt
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** January 2025  
+**Document Version:** 1.0
+**Last Updated:** January 2025
 **Status:** Ready for Implementation
-

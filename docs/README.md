@@ -6,34 +6,45 @@ This directory contains project documentation, including integration guides, arc
 
 ```
 docs/
-├── README.md                              # This file
-├── PATTERNFLY-INTEGRATION-ISSUES.md      # PatternFly Compass integration issues
+├── README.md                               # This file
+├── data-abstraction-roadmap.md             # Hummingbird integration status
+├── implementatino-status.md                # Hummingbird integration status
+├── patternfly-integration-issues.md        # PatternFly Compass integration issues
 └── tooling/
     └── PATTERNFLY-MCP-TOOLING.md         # MCP server tooling improvements
 ```
 
 ## Documentation Index
 
+### Data Abstraction Layer
+
+- **[Hummingbird data abstraction layer](./data-abstraction-roadmap.md)** - Tracks issues with PatternFly Compass integration, including empty ARIA landmarks, directory naming, code incompatibility, and the need for a base demo template.
+
 ### Integration & Issues
-- **[PatternFly Integration Issues](./PATTERNFLY-INTEGRATION-ISSUES.md)** - Tracks issues with PatternFly Compass integration, including empty ARIA landmarks, directory naming, code incompatibility, and the need for a base demo template.
+
+- **[PatternFly Integration Issues](./patternfly-integration-issues.md)** - Tracks issues with PatternFly Compass integration, including empty ARIA landmarks, directory naming, code incompatibility, and the need for a base demo template.
 
 ### Tooling
+
 - **[PatternFly MCP Tooling](./tooling/PATTERNFLY-MCP-TOOLING.md)** - Observations and improvements for PatternFly MCP server integration, including staging documentation gaps, seed app context, and type definition issues.
 
 ## Related Documentation
 
 ### Project Documentation
+
 - **[HUMMINGBIRD-ROADMAP.md](../HUMMINGBIRD-ROADMAP.md)** - Main project roadmap
 - **[DATA-ABSTRACTION-LAYER-ROADMAP.md](../DATA-ABSTRACTION-LAYER-ROADMAP.md)** - Data layer abstraction roadmap
 - **[IMPLEMENTATION_STATUS.md](../IMPLEMENTATION_STATUS.md)** - Current implementation status
 
 ### AI Documentation
+
 - **[ai-documentation/](../ai-documentation/)** - AI-specific guidance and rules
 - **[COMPASS-THEME-DOCS-SUMMARY.md](../COMPASS-THEME-DOCS-SUMMARY.md)** - Compass theme documentation summary
 
 ## Contributing
 
 When adding new documentation:
+
 1. Place in appropriate subdirectory (or create one)
 2. Update this README with a link
 3. Follow markdown best practices
@@ -42,5 +53,3 @@ When adding new documentation:
 ---
 
 **Last Updated**: January 2025
-
-
